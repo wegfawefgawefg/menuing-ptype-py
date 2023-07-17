@@ -1,0 +1,40 @@
+# requirements
+- mouse
+- gamepad
+- always fit to a screen correctly
+- configure in code. duh
+- section headers
+
+# alignment
+- by fraction of screen, 
+    tl is 5% off, br is 5% off
+- rows are 2% screen spaced from eachother
+- in rows
+- left aligned title, right aligned items, items are 2% spaced from eachother
+- if num items exceeds what is renderable, make more pages, 
+- show 8 items going down changes with items are shown
+- indicator that not all items are shown
+- show "page K out of max"
+- showing 1 to 8 of 20 options
+- if page is not 1, and up was pressed on top option on a page, go to previous page, bottom option
+- if page is not last, and current item is last on page, (play page turn sound)
+- scroll wheel changes page, bumper changes page too.
+
+# elements of interaction
+- left right buttons to go through options
+- left right buttons to go through slider in a range, with a float/int input
+- set a key or button
+
+# options
+- audio zone
+    - music volume: left right buttons, with num and %, int only
+    - sfx volume: left right buttons, with num and %, int only
+
+- video
+    - resolution
+    - brightness
+    - particle effects: (minimal, low, normal, high, insane)
+
+- keybinds
+    - name, press a, press button
+
