@@ -4,6 +4,7 @@ import sys
 from globals import FONT, HIGHLIGHT, WHITE
 from mode import Mode
 from vec2 import Vec2
+from sounds import sound_effects
 
 VIDEO_MENU_OPTIONS = ["Resolution", "Fullscreen", "Brightness", "Apply", "Back"]
 
@@ -49,30 +50,49 @@ def handle_events(state):
                 state.menu_selection -= 1
                 if state.menu_selection < 0:
                     state.menu_selection = 0
+                    sound_effects["cant"].stop()
+                    sound_effects["cant"].play()
+                else:
+                    sound_effects["cursor_move"].stop()
+                    sound_effects["cursor_move"].play()
             if event.key == pygame.K_DOWN:
                 state.menu_selection += 1
                 if state.menu_selection >= len(VIDEO_MENU_OPTIONS):
                     state.menu_selection = len(VIDEO_MENU_OPTIONS) - 1
+                    sound_effects["cant"].stop()
+                    sound_effects["cant"].play()
+                else:
+                    sound_effects["cursor_move"].stop()
+                    sound_effects["cursor_move"].play()
             if event.key == pygame.K_RETURN:
                 selection = VIDEO_MENU_OPTIONS[state.menu_selection]
                 match selection:
                     case "Apply":
                         # if resolution changed, update it
+                        something_changed = False
                         if state.video_settings.resolution != state.resolution:
                             state.resolution = Vec2(
                                 state.video_settings.resolution[0],
                                 state.video_settings.resolution[1],
                             )
+                            something_changed = True
                         if state.video_settings.fullscreen:
                             pygame.display.set_mode(
                                 state.resolution.as_tuple(), pygame.FULLSCREEN
                             )
+                            something_changed = True
                         else:
                             pygame.display.set_mode(state.resolution.as_tuple())
 
+                        if something_changed:
+                            sound_effects["confirm"].stop()
+                            sound_effects["confirm"].play()
+
                     case "Back":
-                        state.mode = Mode.Main_Menu
+                        state.mode = Mode.Settings_Menu
                         state.menu_selection = 0
+                        sound_effects["cant"].stop()
+                        sound_effects["cant"].play()
             # handle right left case
             if event.key == pygame.K_RIGHT or event.key == pygame.K_LEFT:
                 selection = VIDEO_MENU_OPTIONS[state.menu_selection]
@@ -90,6 +110,8 @@ def handle_events(state):
                             state.video_settings.resolution = (
                                 state.video_settings.resolution_options[index]
                             )
+                            sound_effects["right"].stop()
+                            sound_effects["right"].play()
                         case pygame.K_LEFT:
                             index -= 1
                             if index < 0:
@@ -97,6 +119,8 @@ def handle_events(state):
                             state.video_settings.resolution = (
                                 state.video_settings.resolution_options[index]
                             )
+                            sound_effects["left"].stop()
+                            sound_effects["left"].play()
                 if selection == "Fullscreen":
                     # if enter, right, or left pressed
                     if (
@@ -107,16 +131,32 @@ def handle_events(state):
                         state.video_settings.fullscreen = (
                             not state.video_settings.fullscreen
                         )
+                        if state.video_settings.fullscreen:
+                            sound_effects["right"].stop()
+                            sound_effects["right"].play()
+                        else:
+                            sound_effects["left"].stop()
+                            sound_effects["left"].play()
                 if selection == "Brightness":
                     # go up or down by 0.1
                     if event.key == pygame.K_RIGHT:
                         state.video_settings.brightness += 0.1
                         if state.video_settings.brightness > 1.0:
                             state.video_settings.brightness = 1.0
+                            sound_effects["cant"].stop()
+                            sound_effects["cant"].play()
+                        else:
+                            sound_effects["right"].stop()
+                            sound_effects["right"].play()
                     if event.key == pygame.K_LEFT:
                         state.video_settings.brightness -= 0.1
-                        if state.video_settings.brightness < 0.0:
-                            state.video_settings.brightness = 0.0
+                        if state.video_settings.brightness < 0.1:
+                            state.video_settings.brightness = 0.1
+                            sound_effects["cant"].stop()
+                            sound_effects["cant"].play()
+                        else:
+                            sound_effects["left"].stop()
+                            sound_effects["left"].play()
 
 
 def draw(state, screen):
@@ -132,6 +172,8 @@ def draw(state, screen):
     # Draw the title.
     title = FONT.render("Main Menu", True, WHITE)
     title_rect = title.get_rect(center=(center_x, cursor))
+    alpha = int(255 * state.video_settings.brightness)
+    title.set_alpha(alpha)
     screen.blit(title, title_rect)
 
     cursor += ten_percent * 2
@@ -150,6 +192,8 @@ def draw(state, screen):
         color = HIGHLIGHT if i == state.menu_selection else WHITE
         text = FONT.render(option, True, color)
         text_rect = text.get_rect(center=(center_x, cursor))
+        alpha = int(255 * state.video_settings.brightness)
+        text.set_alpha(alpha)
         screen.blit(text, text_rect)
         cursor += five_percent
 
