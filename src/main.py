@@ -1,9 +1,8 @@
 import pygame
-import sys
 from globals import FONT, WHITE
 from menus import audio_menu, controls_menu, settings_menu, video_menu
 from vec2 import Vec2
-from sounds import play_song
+from sounds import init_audio, play_song
 
 
 from mode import Mode
@@ -120,10 +119,12 @@ def main():
     pygame.init()
     pygame.font.init()
     pygame.mixer.init()
+    pygame.display.set_caption("menuing-ptype-py")
 
     state = State()
     screen = pygame.display.set_mode(state.resolution.as_tuple())
 
+    init_audio()
     play_song("menu")
     pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.play(-1)  # loop
@@ -132,9 +133,11 @@ def main():
     while True:
         handle_events(state)
         step(state)
+        screen = pygame.display.get_surface()
         screen.fill((0, 0, 0))
         draw(state, screen)
         pygame.display.flip()
+        clock.tick(60)
 
 
 if __name__ == "__main__":

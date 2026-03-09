@@ -1,0 +1,26 @@
+[project]
+name = "menuing-ptype-py"
+version = "0.1.0"
+description = "Archived pygame menu prototype"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pygame>=2.6,<3",
+]
+
+[project.scripts]
+menuing-ptype-py = "main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["main", "globals", "mode", "sounds", "vec2"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["menus*"]

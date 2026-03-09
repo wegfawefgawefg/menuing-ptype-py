@@ -1,24 +1,28 @@
-# sounds.py
+from pathlib import Path
 
-import os
 import pygame
 
-pygame.mixer.init()
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+MUSIC_DIR = ASSETS_DIR / "audio" / "music"
+SOUND_EFFECTS_DIR = ASSETS_DIR / "audio" / "sound_effects" / "ui"
+
+sound_effects = {}
 
 
 def load_sounds(directory):
     sounds = {}
-    for filename in os.listdir(directory):
-        if filename.endswith(".ogg"):
-            key = os.path.splitext(filename)[0]
-            sounds[key] = pygame.mixer.Sound(os.path.join(directory, filename))
+    for sound_path in sorted(directory.glob("*.ogg")):
+        sounds[sound_path.stem] = pygame.mixer.Sound(str(sound_path))
     return sounds
 
 
+def init_audio():
+    if not pygame.mixer.get_init():
+        pygame.mixer.init()
+
+    sound_effects.clear()
+    sound_effects.update(load_sounds(SOUND_EFFECTS_DIR))
+
+
 def play_song(song_title):
-    directory = "../assets/audio/music"
-    file_name = f"{song_title}.ogg"
-    pygame.mixer.music.load(os.path.join(directory, file_name))
-
-
-sound_effects = load_sounds("../assets/audio/sound_effects/ui")
+    pygame.mixer.music.load(str(MUSIC_DIR / f"{song_title}.ogg"))
